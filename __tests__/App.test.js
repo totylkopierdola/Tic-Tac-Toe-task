@@ -14,22 +14,25 @@ jest.mock("@xstate/react", () => ({
 }));
 
 describe("App Component", () => {
-  const mockSend = jest.fn();
-  const initialState = {
-    context: {
-      board: Array(9).fill(null),
-      currentPlayer: "X",
-      gameWinner: null,
-    },
-    matches: jest.fn().mockReturnValue(true),
-    hasTag: jest.fn(),
-  };
+  let mockSend;
+  let initialState;
 
   beforeEach(() => {
+    mockSend = jest.fn();
+    initialState = {
+      context: {
+        board: Array(9).fill(null),
+        currentPlayer: "X",
+        gameWinner: null,
+      },
+      matches: jest.fn().mockReturnValue(true),
+      hasTag: jest.fn(),
+    };
+
     useMachine.mockReturnValue([initialState, mockSend]);
   });
 
-  test("renders an empty board at game start", () => {
+  test("renders an empty Tic-Tac-Toe board when the game starts", () => {
     render(<App />);
 
     const tiles = screen
@@ -42,49 +45,46 @@ describe("App Component", () => {
     });
   });
 
-  test("shows current player turn", () => {
+  test("displays the current player's turn correctly", () => {
     render(<App />);
     const turnDisplay = screen.getByTestId("player-turn");
     expect(turnDisplay).toHaveTextContent("It is Player X's turn");
   });
 
-  test("dispatches MAKE_MOVE action on tile click", () => {
+  test("dispatches MAKE_MOVE action when a tile is clicked", () => {
     render(<App />);
-    const tiles = screen.getAllByRole("button");
-    const firstTile = tiles.find(
-      (tile) => tile.getAttribute("data-index") === "0"
-    );
+    const firstTile = screen
+      .getAllByRole("button")
+      .find((tile) => tile.getAttribute("data-index") === "0");
 
     fireEvent.click(firstTile);
     expect(mockSend).toHaveBeenCalledWith({ type: "MAKE_MOVE", position: 0 });
   });
 
-  test("shows game over message and reset button", () => {
-    initialState.context = {
-      board: Array(9).fill(null),
-      currentPlayer: "X",
-      gameWinner: "X",
-    };
-    initialState.matches = jest
-      .fn()
-      .mockReturnValueOnce(true) // For game over state
-      .mockReturnValueOnce(false); // For other states
-
+  test("shows game over message and allows reset when game is finished", async () => {
     render(<App />);
 
-    expect(screen.getByTestId("game-over")).toHaveTextContent("Game Over");
+    const tiles = screen.getAllByTestId("tile");
+    tiles.forEach((tile) => {
+      userEvent.click(tile);
+    });
 
-    const resetButton = screen.queryByTestId("reset-button");
-    if (resetButton) {
-      fireEvent.click(resetButton);
-      expect(mockSend).toHaveBeenCalledWith({ type: "RESTART" });
-    }
+    await waitFor(() => {
+      const gameOverMessage = screen.getByRole("heading", {
+        name: /Wins!|It's a Draw!/i,
+      });
+      expect(gameOverMessage).toBeInTheDocument();
+    });
+
+    const resetButton = screen.getByTestId("reset-button");
+    expect(resetButton).toBeInTheDocument();
+
+    fireEvent.click(resetButton);
   });
 
-  test("tiles are clickable and dispatch MAKE_MOVE action", () => {
+  test("dispatches MAKE_MOVE action for each clickable tile", () => {
     render(<App />);
-
-    initialState.matches.mockReturnValueOnce(true).mockReturnValue(false); // In-progress state
+    initialState.matches.mockReturnValueOnce(true).mockReturnValue(false);
 
     const tiles = screen.getAllByTestId("tile");
 
@@ -97,20 +97,41 @@ describe("App Component", () => {
     });
   });
 
-  test("renders GameOverWrapper when the game is finished", async () => {
+  test("renders GameOverWrapper when the game reaches the game over state", async () => {
     render(<App />);
 
     const tiles = screen.getAllByTestId("tile");
 
-    // Simulate moves to reach the game over state
-    tiles.forEach((tile, index) => {
+    tiles.forEach((tile) => {
       userEvent.click(tile);
     });
 
     await waitFor(() => {
-      expect(screen.getByRole("heading")).toBeInTheDocument();
+      const headings = screen.getAllByRole("heading");
+      expect(headings).toHaveLength(2);
     });
 
-    expect(screen.getByRole("heading")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /It's a Draw!/i })
+    ).toBeInTheDocument();
+  });
+
+  test("resets the game board when the reset button is clicked", async () => {
+    render(<App />);
+
+    const tiles = screen.getAllByTestId("tile");
+    tiles.forEach((tile) => {
+      userEvent.click(tile);
+    });
+
+    const resetButton = screen.getByTestId("reset-button");
+    fireEvent.click(resetButton);
+
+    tiles.forEach((tile) => {
+      expect(tile).toHaveTextContent("");
+    });
+
+    const turnDisplay = screen.getByTestId("player-turn");
+    expect(turnDisplay).toHaveTextContent("It is Player X's turn");
   });
 });

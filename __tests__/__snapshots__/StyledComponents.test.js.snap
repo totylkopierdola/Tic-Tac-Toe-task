@@ -1,0 +1,95 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Styled Components Snapshot Testing renders Board correctly 1`] = `
+<div
+  className="sc-dsLQwm ilhPqq"
+/>
+`;
+
+exports[`Styled Components Snapshot Testing renders BoardWrapper correctly 1`] = `
+<div
+  className="sc-fQpRED boxwnL"
+/>
+`;
+
+exports[`Styled Components Snapshot Testing renders Container correctly 1`] = `
+<div
+  className="sc-braxZu fMttEx"
+/>
+`;
+
+exports[`Styled Components Snapshot Testing renders GameOverWrapper correctly with a winner 1`] = `
+<div
+  className="sc-iCZwEW Ocnki"
+>
+  <h2>
+    Player X Wins!
+  </h2>
+</div>
+`;
+
+exports[`Styled Components Snapshot Testing renders GameOverWrapper correctly without a winner (draw) 1`] = `
+<div
+  className="sc-iCZwEW cfuKOM"
+>
+  <h2>
+    Draw!
+  </h2>
+</div>
+`;
+
+exports[`Styled Components Snapshot Testing renders Overlay correctly 1`] = `
+<div
+  className="sc-la-DxNn beEeuC"
+/>
+`;
+
+exports[`Styled Components Snapshot Testing renders PlayerTurn correctly for player O 1`] = `
+<div
+  className="sc-elDIKY jFnifB"
+>
+  Player O's Turn
+</div>
+`;
+
+exports[`Styled Components Snapshot Testing renders PlayerTurn correctly for player X 1`] = `
+<div
+  className="sc-elDIKY gIDxat"
+>
+  Player X's Turn
+</div>
+`;
+
+exports[`Styled Components Snapshot Testing renders ResetButton correctly 1`] = `
+<button
+  className="sc-gnpbhQ hucphQ"
+>
+  Reset Game
+</button>
+`;
+
+exports[`Styled Components Snapshot Testing renders Tile correctly for O 1`] = `
+<div
+  className="sc-iKTcqh ieIZJe"
+/>
+`;
+
+exports[`Styled Components Snapshot Testing renders Tile correctly for X 1`] = `
+<div
+  className="sc-iKTcqh bcngpo"
+/>
+`;
+
+exports[`Styled Components Snapshot Testing renders Tile correctly when empty 1`] = `
+<div
+  className="sc-iKTcqh bxBMRo"
+/>
+`;
+
+exports[`Styled Components Snapshot Testing renders Title correctly 1`] = `
+<h1
+  className="sc-gJhJTp kPzxOS"
+>
+  Game Title
+</h1>
+`;
