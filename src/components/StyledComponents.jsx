@@ -98,6 +98,12 @@ export const Tile = styled.div`
     outline: ${({ $isClickable }) =>
       $isClickable ? "2px solid #00000038" : "none"};
   }
+
+  /* Apply aria-disabled as a data attribute for testing */
+  /* &[aria-disabled="true"] {
+    cursor: not-allowed;
+    background-color: ${theme.disabledTileColor};
+  } */
 `;
 
 export const ResetButton = styled.button`

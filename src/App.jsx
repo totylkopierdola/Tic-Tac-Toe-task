@@ -21,13 +21,17 @@ export default function App() {
       <Title>Tic-Tac-Toe</Title>
 
       <BoardWrapper>
-        <Board>
+        <Board data-testid="board">
           {[...new Array(9).keys()].map((index) => (
             <Tile
+              data-testid="tile"
+              data-index={index}
+              role="button"
               key={index}
-              $isClickable={!state.context.board[index]}
+              $isClickable={!state.matches("gameOver")} // Ensure this is correct
               $value={state.context.board[index]}
               onClick={() => send({ type: "MAKE_MOVE", position: index })}
+              // aria-disabled={state.matches("gameOver") ? "true" : "false"} // Ensure this is correct
             >
               {state.context.board[index]}
             </Tile>
@@ -35,11 +39,14 @@ export default function App() {
         </Board>
       </BoardWrapper>
 
-      <PlayerTurn $player={state.context.currentPlayer}>
+      <PlayerTurn
+        $player={state.context.currentPlayer}
+        data-testid="player-turn"
+      >
         {state.matches("inProgress") ? (
           <p>It is Player {state.context.currentPlayer}'s turn</p>
         ) : (
-          <p>Game Over</p>
+          <p data-testid="game-over">Game Over</p>
         )}
       </PlayerTurn>
 
@@ -47,7 +54,7 @@ export default function App() {
         <>
           <Overlay $show={true} />
           <GameOverWrapper $winner={state.context.gameWinner}>
-            <h2>
+            <h2 role="heading">
               {state.hasTag("hasWinner")
                 ? `Player ${state.context.gameWinner} Wins!`
                 : "It's a Draw!"}
@@ -55,7 +62,10 @@ export default function App() {
             <p>
               {state.hasTag("hasWinner") ? "Congratulations!" : "Good effort!"}
             </p>
-            <ResetButton onClick={() => send({ type: "RESTART" })}>
+            <ResetButton
+              data-testid="reset-button"
+              onClick={() => send({ type: "RESTART" })}
+            >
               Reset Game
             </ResetButton>
           </GameOverWrapper>
