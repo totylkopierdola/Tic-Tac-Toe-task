@@ -30,19 +30,19 @@ describe("ticTacToeMachine", () => {
 
   test("should not allow a move on an occupied tile", () => {
     service.send({ type: "MAKE_MOVE", position: 0 });
-    service.send({ type: "MAKE_MOVE", position: 0 }); // Attempt to move on the same tile
+    service.send({ type: "MAKE_MOVE", position: 0 });
     const snapshot = service.getSnapshot();
 
     expect(snapshot.context.board[0]).toBe("x");
-    expect(snapshot.context.currentPlayer).toBe("o"); // Still 'o' since move didn't occur
+    expect(snapshot.context.currentPlayer).toBe("o");
   });
 
   test("should detect a win", () => {
-    service.send({ type: "MAKE_MOVE", position: 0 }); // x
-    service.send({ type: "MAKE_MOVE", position: 3 }); // o
-    service.send({ type: "MAKE_MOVE", position: 1 }); // x
-    service.send({ type: "MAKE_MOVE", position: 4 }); // o
-    service.send({ type: "MAKE_MOVE", position: 2 }); // x - win
+    service.send({ type: "MAKE_MOVE", position: 0 });
+    service.send({ type: "MAKE_MOVE", position: 3 });
+    service.send({ type: "MAKE_MOVE", position: 1 });
+    service.send({ type: "MAKE_MOVE", position: 4 });
+    service.send({ type: "MAKE_MOVE", position: 2 });
     const snapshot = service.getSnapshot();
 
     expect(snapshot.matches("gameOver.victory")).toBe(true);
@@ -50,15 +50,15 @@ describe("ticTacToeMachine", () => {
   });
 
   test("should detect a draw", () => {
-    service.send({ type: "MAKE_MOVE", position: 0 }); // x
-    service.send({ type: "MAKE_MOVE", position: 1 }); // o
-    service.send({ type: "MAKE_MOVE", position: 2 }); // x
-    service.send({ type: "MAKE_MOVE", position: 4 }); // o
-    service.send({ type: "MAKE_MOVE", position: 3 }); // x
-    service.send({ type: "MAKE_MOVE", position: 5 }); // o
-    service.send({ type: "MAKE_MOVE", position: 7 }); // x
-    service.send({ type: "MAKE_MOVE", position: 6 }); // o
-    service.send({ type: "MAKE_MOVE", position: 8 }); // x
+    service.send({ type: "MAKE_MOVE", position: 0 });
+    service.send({ type: "MAKE_MOVE", position: 1 });
+    service.send({ type: "MAKE_MOVE", position: 2 });
+    service.send({ type: "MAKE_MOVE", position: 4 });
+    service.send({ type: "MAKE_MOVE", position: 3 });
+    service.send({ type: "MAKE_MOVE", position: 5 });
+    service.send({ type: "MAKE_MOVE", position: 7 });
+    service.send({ type: "MAKE_MOVE", position: 6 });
+    service.send({ type: "MAKE_MOVE", position: 8 });
     const snapshot = service.getSnapshot();
 
     expect(snapshot.matches("gameOver.stalemate")).toBe(true);
@@ -66,11 +66,8 @@ describe("ticTacToeMachine", () => {
   });
 
   test("should reset the game", () => {
-    // Simulate a few moves
     service.send({ type: "MAKE_MOVE", position: 0 });
     service.send({ type: "MAKE_MOVE", position: 1 });
-
-    // Reset the game
     service.send({ type: "RESTART" });
     const snapshot = service.getSnapshot();
 
@@ -80,14 +77,10 @@ describe("ticTacToeMachine", () => {
     expect(snapshot.context.gameWinner).toBeUndefined();
   });
 
-  // Additional tests
-
   test("should handle invalid actions gracefully", () => {
-    // Attempt an invalid action
     service.send({ type: "INVALID_ACTION" });
     const snapshot = service.getSnapshot();
 
-    // Verify that the state remains unchanged or defaults to a valid state
     expect(snapshot.matches("inProgress")).toBe(true);
     expect(snapshot.context.board).toEqual(Array(9).fill(null));
     expect(snapshot.context.currentPlayer).toBe("x");
@@ -95,7 +88,6 @@ describe("ticTacToeMachine", () => {
   });
 
   test("should handle rapid moves by the same player gracefully", () => {
-    // Make multiple moves in quick succession
     service.send({ type: "MAKE_MOVE", position: 0 });
     service.send({ type: "MAKE_MOVE", position: 1 });
     service.send({ type: "MAKE_MOVE", position: 2 });
@@ -108,11 +100,8 @@ describe("ticTacToeMachine", () => {
   });
 
   test("should not reset the game on unexpected events", () => {
-    // Simulate a few moves
     service.send({ type: "MAKE_MOVE", position: 0 });
     service.send({ type: "MAKE_MOVE", position: 1 });
-
-    // Simulate an unexpected event
     service.send({ type: "UNEXPECTED_EVENT" });
     const snapshot = service.getSnapshot();
 
